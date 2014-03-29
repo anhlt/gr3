@@ -7,6 +7,12 @@ from recommendation.recommender.classes import ItemBasedRecommender
 from recommendation.recommender.item_strategies import ItemsNeighborhoodStrategy
 import datetime
 import json
+import requests
+import logging
+
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger('Viewer')
+
 
 
 critics={'anh': {'LadyRoom': 2.5, 'Cafe Moc': 3.5,
@@ -27,14 +33,30 @@ critics={'anh': {'LadyRoom': 2.5, 'Cafe Moc': 3.5,
  'Rap Phim': 3.0, 'CongVien': 5.0, 'Cafe Nhan': 3.5},
 'Long': {'Cafe Moc':4.5,'Cafe Nhan':1.0,'CongVien':4.0}}
 
+base_api_url = "http://harrenhal-php-97705.apse1.nitrousbox.com/elgg/services/api/rest/json/"
 
 def current_datetime(request):
-    model =  DataModel(critics)
+    payload = {'method': 'get.all.rating'}
+    r = requests.get(base_api_url,params=payload)
+    results = r.json()
+    results = results['result']
+    # logger.debug(result)
+
+    dataset = {}
+    for result in results:
+	   if result['rating'] != 0:
+            user_id = result['user_id']
+            if user_id not in dataset:
+                dataset[user_id] = {}
+            dataset[user_id].update({result['page_id']:result['rating']})
+
+    #logger.debug(dataset)
+
+    model =  DataModel(dataset)
     similarity = ItemSimilarity(model, euclidean_distances)
     items_strategy = ItemsNeighborhoodStrategy()
     recsys = ItemBasedRecommender(model, similarity, items_strategy)
-    response_data = recsys.recommended('Long')
-    print(response_data)
+    response_data = recsys.recommended(256)
     return HttpResponse(json.dumps(response_data), content_type="application/json")
 
 

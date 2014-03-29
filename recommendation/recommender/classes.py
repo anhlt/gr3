@@ -24,10 +24,7 @@ class ItemBasedRecommender(ItemRecommender):
             self.items_selection_strategy = items_selection_strategy
 
     def recommended(self, user_id, how_many=None):
-
         candidate_items = self.all_other_items(user_id)
-        logger.info('-----')
-        logger.info(candidate_items)
         recommendable_items = self._top_matches(user_id, candidate_items, how_many)
 
         return recommendable_items

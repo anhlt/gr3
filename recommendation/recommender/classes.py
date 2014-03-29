@@ -25,6 +25,7 @@ class ItemBasedRecommender(ItemRecommender):
 
     def recommended(self, user_id, how_many=None):
         candidate_items = self.all_other_items(user_id)
+        logger.debug(candidate_items)
         recommendable_items = self._top_matches(user_id, candidate_items, how_many)
 
         return recommendable_items
@@ -73,14 +74,21 @@ class ItemBasedRecommender(ItemRecommender):
         logger.debug(preferences)
 
         preference_values = preferences[~np.isnan(preferences)]
+        logger.debug(preference_values)
         target_ids = target_ids[~np.isnan(preferences)]
+        logger.debug(target_ids)
 
         sorted_preferences = np.lexsort((preference_values,))[::-1]
+        logger.debug(sorted_preferences)
 
         sorted_preferences = sorted_preferences[0:how_many] \
             if how_many and sorted_preferences.size > how_many \
             else sorted_preferences
-        top_n_recs = [(target_ids[ind], \
-                       preferences[ind]) for ind in sorted_preferences]
 
+        logger.debug(sorted_preferences)
+        
+        top_n_recs = [(target_ids[ind], \
+                       preference_values[ind]) for ind in sorted_preferences]
+
+        logger.debug(top_n_recs)
         return top_n_recs

@@ -40,23 +40,19 @@ def current_datetime(request):
     r = requests.get(base_api_url,params=payload)
     results = r.json()
     results = results['result']
-    # logger.debug(result)
-
     dataset = {}
-    for result in results:
+    for result in results[:6000]:
 	   if result['rating'] != 0:
             user_id = result['user_id']
             if user_id not in dataset:
                 dataset[user_id] = {}
             dataset[user_id].update({result['page_id']:result['rating']})
 
-    #logger.debug(dataset)
-
     model =  DataModel(dataset)
     similarity = ItemSimilarity(model, euclidean_distances)
     items_strategy = ItemsNeighborhoodStrategy()
     recsys = ItemBasedRecommender(model, similarity, items_strategy)
-    response_data = recsys.recommended(256)
+    response_data = recsys.recommended(287)
     return HttpResponse(json.dumps(response_data), content_type="application/json")
 
 

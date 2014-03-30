@@ -51,7 +51,6 @@ class MatrixPreferenceDataModel(BaseDataModel):
         self.index = np.empty(shape=(self._user_ids.size, self._item_ids.size))
 
         for user_no, user_id in enumerate(self._user_ids):
-            logger.debug("PROGRESS : at user_id #%i/%i" % (user_no, self._user_ids.size))
             for item_no, item_id in enumerate(self._item_ids):
                 r = self.dataset[user_id].get(item_id, np.NaN)
                 self.index[user_no, item_no] = r

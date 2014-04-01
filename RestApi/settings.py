@@ -61,19 +61,8 @@ WSGI_APPLICATION = 'RestApi.wsgi.application'
 
 
 RQ_QUEUES = {
-    'default': {
-        'HOST': 'localhost',
-        'PORT': 6379,
-        'DB': 0,
-        'PASSWORD': '',
-    },
     'high': {
         'URL': os.getenv('REDISTOGO_URL'), # If you're on Heroku
-        'DB': 0,
-    },
-    'low': {
-        'HOST': 'localhost',
-        'PORT': 6379,
         'DB': 0,
     }
 }

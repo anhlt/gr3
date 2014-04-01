@@ -32,6 +32,8 @@ def current_datetime(request):
 def recommended(user_id):
     payload = {'method': 'get.all.rating'}
     r = requests.get(base_api_url,params=payload)
+    results = r.json()
+    results = results['result']
     dataset = {}
     for result in results[:2000]:
        if result['rating'] != 0:

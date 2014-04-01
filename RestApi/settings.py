@@ -59,12 +59,19 @@ WSGI_APPLICATION = 'RestApi.wsgi.application'
 # https://docs.djangoproject.com/en/1.6/ref/settings/#databases
 
 
-
 RQ_QUEUES = {
-    'high': {
-        'URL': os.getenv('REDISTOGO_URL'), # If you're on Heroku
+    'default': {
+        'URL': os.getenv('REDISTOGO_URL', 'redis://localhost:6379'),
         'DB': 0,
-    }
+     }, 
+    'high': {
+        'URL': os.getenv('REDISTOGO_URL', 'redis://localhost:6379'), # If you're on Heroku
+        'DB': 0,
+    },
+    'low': {
+        'URL': os.getenv('REDISTOGO_URL', 'redis://localhost:6379'),
+        'DB': 0,
+    },
 }
 # Internationalization
 # https://docs.djangoproject.com/en/1.6/topics/i18n/

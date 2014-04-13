@@ -8,11 +8,6 @@ logger = logging.getLogger('metrics')
 
 
 def euclidean_distances(X, Y, squared=False, inveser=True):
-
-
-#	logger.info("-Compare between-")
-#	logger.info(X)
-#	logger.info(Y)
     if X is Y:
         X = Y = np.asanyarray(X)
     else:
@@ -24,8 +19,6 @@ def euclidean_distances(X, Y, squared=False, inveser=True):
 
     if squared:
         return ssd.cdist(X, Y, 'sqeuclidean')
-    #tra ve square distance
-
     XY = ssd.cdist(X, Y)
     result = np.divide(1.0, (1.0 + XY)) if inveser else XY
 
@@ -43,3 +36,14 @@ def cosine_distances(X, Y):
         raise ValueError("Incompatible dimension for X and Y matrices")
 
     return 1. - ssd.cdist(X, Y, 'cosine')
+
+    XY = ssd.cdist(X, Y)
+    result = np.divide(1.0, (1.0 + XY)) if inveser else XY
+
+    return result
+
+
+def disagreement_variance(X):
+    return np.square(X - X.mean(0)).mean(0)
+	
+

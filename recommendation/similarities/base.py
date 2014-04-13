@@ -15,10 +15,10 @@ class BaseSimilarity(object):
     def get_similarity(self, source_id, target_id):
         raise NotImplementedError("cannot instantiate Abstract Base Class")
 
-    def get_similarities(self, source_id):
-        '''
-        Return similarity of source_id to all source in the model
-        '''
+        def get_similarities(self, source_id):
+            '''
+            Return similarity of source_id to all source in the model
+            '''
 
         raise NotImplementedError("cannot instantiate Abstract Base Class")
 

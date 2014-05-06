@@ -19,6 +19,8 @@ logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger('Viewer')
 
 base_api_url = "http://harrenhal-php-97705.apse1.nitrousbox.com/elgg/services/api/rest/json/"
+recommended_uri = "http://harrenhal-php-97705.apse1.nitrousbox.com/elgg/location/recommend"
+group_uri = 'http://harrenhal-php-97705.apse1.nitrousbox.com/elgg/services/api/rest/json/?method=get.user.by.group&group_id=589'
 
 
 def individual_recommend(request):
@@ -51,13 +53,10 @@ def get_result(request):
 
 
 def group_recommend(request):
-    job = django_rq.enqueue(grouprecommend)
-    # job = django_rq.enqueue(recommended, user_id)
-
+    group_id = int(request.GET.get('group_id', '589'))
+    job = django_rq.enqueue(grouprecommend,group_id)
     response_data = {'status': 'processing', 'job': job.key}
     return HttpResponse(json.dumps(response_data), content_type="application/json")
-
-recommended_uri = "http://harrenhal-php-97705.apse1.nitrousbox.com/elgg/location/recommend"
 
 @job
 def recommended(user_id):
@@ -86,8 +85,13 @@ def recommended(user_id):
 
 
 @job
-def grouprecommend():
-    user_list = [244, 271, 272]
+def grouprecommend(group_id):
+    logger.info('hehehe')
+    payload = {'method':'get.user.by.group','group_id':group_id}
+    r = requests.get(base_api_url, params=payload)
+    results = r.json()
+    user_list = results['result']
+    logger.info(user_list)
     payload = {'method': 'get.all.rating'}
     r = requests.get(base_api_url, params=payload)
     results = r.json()
@@ -110,7 +114,9 @@ def grouprecommend():
             model.set_preference(user, place[0], place[1])
 
     gr = GroupRecommender(model, user_list, expertise="1", social="1", dissimmilarity=disagreement_variance)
-    return gr.recommend()
+    result = gr.recommend()
+    logger.info(result)
+    return result
 
 
 
